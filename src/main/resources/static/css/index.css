@@ -1,0 +1,289 @@
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+
+body {
+    background-color: #ffeae0;
+    color: #333;
+    font-family: 'Pacifico', sans-serif;
+    position: relative;
+}
+
+
+
+.logo {
+    float: left;
+    margin-left: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.logo span {
+    color: black;
+}
+
+#orange-letter {
+    color: #e07b50;
+}
+
+
+
+
+.nav {
+    height: 50px;
+    background-color: #ffeae0;
+    box-shadow: 0 1px 1px #e07b50;
+}
+
+.navli {
+    margin-left: 50px;
+    float: left;
+    width: 100px;
+    line-height: 50px;
+    text-align: center;
+}
+
+.navli a {
+    color: black;
+    display: block;
+    font-weight: bold;
+}
+
+
+#signup {
+    float: right;
+}
+
+#signin {
+    float: right;
+}
+
+.navli a:hover {
+    background-color: #f3d9c8;
+}
+
+#welcome{
+    display: flex;
+    align-items: center;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: inherit;
+    text-decoration: none;
+    margin-right: 20px;
+}
+
+.icon-wrapper i {
+    margin-top: 10px;
+    font-size: 30px;
+    color: #333;
+}
+
+.droplist {
+    background-color: #ffeae0;
+    box-shadow: 0 1px 2px #f3d9c8;
+    display: none;
+    border-radius: 6px;
+    position: absolute;
+    width: 100px;
+    z-index: 1;
+}
+
+.navli:hover .droplist {
+    display: block;
+}
+
+.para {
+    margin-top: 200px;
+}
+
+.main-content {
+    padding: 20px;
+    margin-top: 100px;
+    margin-left: 150px;
+    width: 40%;
+}
+
+h1 {
+    font-size: 44px;
+    color: #b34d3d;
+}
+
+.text-content h1 {
+    font-size: 56px;
+    color: #b34d3d;
+}
+
+.text-content p {
+    margin-top: 40px;
+    color: #704b46;
+    font-size: 28px;
+}
+
+.img {
+    width: 450px;
+    height: 300px;
+    margin-left: 450px;
+    transform: translateY(-370px) translateX(200px);
+}
+
+.img img {
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 10px 10px #faad96;
+}
+
+.category {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.category .list-items {
+    width: 90%;
+    position: relative;
+    margin-top: 100px;
+}
+
+.category .list-items h1 {
+    font-size: 44px;
+    font-weight: 600;
+    font-family: sans-serif;
+    margin-bottom: 70px;
+    text-align: center;
+}
+
+.category .list-items .card-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    outline: 2px solid #faad96;
+    border-radius: 10px;
+    background-color: white;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    margin-left: 10px;
+    text-align: center;
+    position: relative;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.card img {
+    width: 80px !important;
+    height: 80px !important;
+    object-fit: cover;
+    object-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 10px 10px #faad96;
+    border-radius: 50%;
+    margin-top: -40px;
+    transform: translateY(-170px);
+}
+
+.card h2 {
+    margin: 50px 0 10px;
+    font-size: 16px;
+}
+
+.card .price {
+    font-size: 14px;
+    color: #333;
+}
+
+.card .button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #e07b50;
+    color: #fff;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+    align-self: center;
+}
+
+.card .button:hover {
+    background-color: #cc6d3b;
+}
+
+.card .button:active {
+    transform: scale(0.95);
+}
+
+#search-input {
+    width: 300px;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+#search-input:focus {
+    outline: none;
+}
+
+#search-button {
+    padding: 10px 20px;
+    background-color: #e07b50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#search-button:hover {
+    background-color: #cc6d3b;
+}
+
+#search {
+    margin-top: 50px;
+}
+
+#product-image {
+    transition: opacity 0.5s ease-in-out;
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+#cart-image {
+    transition: opacity 0.5s ease-in-out; /* 渐变效果持续时间 */
+    opacity: 1;
+}
+
+.fade-out {
+    opacity: 0; /* 渐变消失 */
+}
+
+.fade-in {
+    opacity: 1; /* 渐变出现 */
+}

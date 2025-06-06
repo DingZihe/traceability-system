@@ -1,0 +1,156 @@
+/* 登录表单容器的布局 */
+.login-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 垂直居中 */
+    height: calc(100vh - 70px); /* 减去导航栏的高度 */
+    width: 100vw; /* 使容器占据整个视口宽度 */
+}
+
+.login-form-box {
+    background: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.login-form-box h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff7f50;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.login-input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.login-input-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.login-input-group input:focus {
+    border-color: #007bff;
+}
+
+.forgot-password-link {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff7f50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background-color: #ff6347;
+}
+
+.extra-links {
+    margin-top: 20px;
+}
+
+.register-link {
+    font-size: 14px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+/* 错误提示的样式 */
+.alert-error {
+    color: #f44336;
+    background-color: #fff6f6;
+    border: 1px solid #f44336;
+    border-radius: 4px; /* 圆角 */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.alert-error i {
+    margin-right: 8px;
+    color: #f44336; /* 图标颜色 */
+    font-size: 16px;
+}
+
+/* 注册成功提示消息的样式 */
+.success-message {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb; /* 浅绿色边框 */
+    color: #155724;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px; /* 圆角 */
+    font-size: 16px; /* 文字大小 */
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 错误提示的样式 */
+.field-error {
+    color: #e74c3c; /* 错误文本颜色 */
+    padding: 0;
+    font-size: 12px; /* 错误提示字体 */
+    margin-top: 5px;
+    line-height: 1.4; /* 保持行高 */
+}
+
+/* 错误图标和文本对齐方式 */
+.field-error div {
+    display: flex; /* 图标和错误信息水平排列 */
+    align-items: flex-start; /* 确保图标和文字顶部对齐 */
+    margin-bottom: 5px; /* 每条错误提示之间留出适当的间距 */
+}
+
+
+.field-error i {
+    margin-right: 6px;
+    color: #e74c3c;
+    font-size: 14px; /* 图标大小 */
+}
+
+
+.field-error p {
+    margin: 0;
+    padding: 0;
+    display: block;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+
+
+

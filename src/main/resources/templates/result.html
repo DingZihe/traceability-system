@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Traceability System</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #e07b50;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #cc6d3b;
+        }
+    </style>
+</head>
+<body class="indexpage">
+<div class="nav">
+    <div class="logo">
+        <span>Traceability<span id="orange-letter">System</span></span>
+    </div>
+    <ul class="navlist">
+        <li class="navli"><a th:href="@{/artifact/inquiry}">Search</a></li>
+        <li class="navli"><a th:href="@{/addTraceLink}">TraceLink</a></li>
+        <li class="navli"><a th:href="@{/artifact/inquiry}">Inquiry</a></li>
+        <li class="navli"><a href="#">About</a></li>
+        <li class="navli"><a th:href="@{/artifact/add}">Artifact</a></li>
+        <li class="navli"><a th:href="@{/login}" class="icon-wrapper"><i class="fas fa-user-circle"></i></a></li>
+    </ul>
+</div>
+
+<div class="container">
+    <h2>Search Results for "<span th:text="${searchName}"></span>"</h2>
+    <div th:if="${artifacts.isEmpty()}">
+        <p>No artifacts found matching the name "<span th:text="${searchName}"></span>".</p>
+    </div>
+    <div th:unless="${artifacts.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Created By</th>
+                <th>Created On</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="artifact : ${artifacts}">
+                <td th:text="${artifact.artifactId}"></td>
+                <td th:text="${artifact.name}"></td>
+                <td th:text="${artifact.description}"></td>
+                <td th:text="${artifact.type}"></td>
+                <td th:text="${artifact.createdBy}"></td>
+                <td th:text="${artifact.createdOn}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a th:href="@{/artifact/inquiry}">Back to Search</a>
+</div>
+</body>
+</html>

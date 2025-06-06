@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--
+    Author: Fu Zixiang
+    Author: Ding Zihe
+    Description: This page is for adding and visualizing trace links
+-->
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Traceability System - Add TraceLink</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/index.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+    <!-- jQuery & jsTree -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jstree@3.3.12/dist/themes/default/style.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/jstree@3.3.12/dist/jstree.min.js"></script>
+
+    <!-- Cytoscape Core -->
+    <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+
+    <style>
+        body { background: #fde8df; margin: 0; padding: 0; font-family: sans-serif; }
+        .container { padding: 1em; }
+        .form-group { margin-bottom: .75em; }
+        #btn-draw { margin-top: 1em; padding: .5em 1em; }
+        #cy { width:100%; height:600px; border:1px solid #ccc; margin-top:.5em; background:#fff; }
+
+        /* Custom context menu styles */
+        #context-menu {
+            position: absolute; display: none; z-index: 9999;
+            background: #fff; border:1px solid #888;
+            box-shadow:2px 2px 6px rgba(0,0,0,0.2);
+            list-style:none; padding:0; margin:0;
+        }
+        #context-menu li {
+            padding:8px 12px; cursor:pointer;
+        }
+        #context-menu li:hover { background:#eee; }
+    </style>
+</head>
+<body class="indexpage">
+<div class="nav">
+    <div class="logo">
+        <span>Traceability<span id="orange-letter">System</span></span>
+    </div>
+    <ul class="navlist">
+        <li class="navli"><a th:href="@{/artifact/inquiry}">Search</a></li>
+        <li class="navli"><a th:href="@{/addTraceLink}">TraceLink</a></li>
+        <li class="navli"><a th:href="@{/artifact/inquiry}">Inquiry</a></li>
+        <li class="navli"><a href="#">About</a></li>
+        <li class="navli"><a th:href="@{/artifact/add}">Artifact</a></li>
+        <li class="navli"><a th:href="@{/login}" class="icon-wrapper"><i class="fas fa-user-circle"></i></a></li>
+    </ul>
+</div>
+
+<div class="container">
+    <h2>Add TraceLink</h2>
+    <form th:action="@{/addTraceLink}" th:object="${traceLinkVO}" method="post">
+        <div class="form-group">
+            <label>Source Artifact</label>
+            <select th:field="*{sourceArtifact}">
+                <option value="">-- Select --</option>
+                <option th:each="artifact : ${sourceArtifacts}"
+                        th:value="${artifact.artifactId}"
+                        th:text="${artifact.name}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Target Artifact</label>
+            <select th:field="*{targetArtifact}">
+                <option value="">-- Select --</option>
+                <option th:each="artifact : ${targetArtifacts}"
+                        th:value="${artifact.artifactId}"
+                        th:text="${artifact.name}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Link Type</label>
+            <div id="linkTypeTree"></div>
+            <input type="hidden" th:field="*{linkType}" id="linkType"/>
+        </div>
+        <button type="submit">Add Link</button>
+    </form>
+
+    <button id="btn-draw" type="button">Generate Graph</button>
+    <div id="cy"></div>
+
+    <!-- Custom HTML context menu -->
+    <ul id="context-menu">
+        <li id="cm-edit">Edit Tracelink</li>
+        <li id="cm-delete">Delete TraceLink</li>
+        <li id="cm-info">Created Time</li>
+    </ul>
+</div>
+
+<script>
+    // Initialize jsTree
+    $('#linkTypeTree').jstree({
+        core: {
+            multiple: false,
+            data: [
+                {
+                    text: 'Trace-link',
+                    children: [
+                        {
+                            text: 're-link',
+                            children: [
+                                {text: 'overlap', id: 'overlap'},
+                                {text: 'Adapt', id: 'adapt'},
+                                {text: 'dependency', id: 'dependency'},
+                                {text: 'generalize', id: 'generalize'},
+                                {text: 'contribution', id: 'contribution'}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    text: 'se-link',
+                    children: [
+                        {text: 'Implemented-By', id: 'Implemented-By'},
+                        {text: 'Tested-By', id: 'Tested-By'}
+                    ]
+                },
+                {
+                    text: 'mde-link',
+                    children: [
+                        {text: 'implicit', id: 'implicit'}
+                    ]
+                }
+            ]
+        }
+    }).on('select_node.jstree', function(e, d) {
+        $('#linkType').val(d.node.id);
+    });
+
+    document.getElementById('btn-draw').addEventListener('click', () => {
+        fetch('/tracelink/graph')
+            .then(r => r.json())
+            .then(data => {
+                // Assemble elements
+                const elements = [];
+                data.nodes.forEach(n => elements.push({data: {id: n.id, label: n.label}}));
+                data.edges.forEach(e => elements.push({
+                    data: {
+                        id: e.id,
+                        source: e.source,
+                        target: e.target,
+                        label: e.label,
+                        createdOn: e.createdOn
+                    }
+                }));
+
+                // Clear old instance
+                const cyContainer = document.getElementById('cy');
+                cyContainer.innerHTML = '';
+
+                // Initialize Cytoscape
+                window.cy = cytoscape({
+                    container: cyContainer,
+                    elements: elements,
+                    style: [
+                        {
+                            selector: 'node',
+                            style: {
+                                'label': 'data(label)',
+                                'text-valign': 'center',
+                                'background-color': '#58a',
+                                'width': 40,
+                                'height': 40,
+                                'font-size': 12
+                            }
+                        },
+                        {
+                            selector: 'edge',
+                            style: {
+                                'curve-style': 'bezier',
+                                'target-arrow-shape': 'triangle',
+                                'label': 'data(label)',
+                                'font-size': 10,
+                                'text-rotation': 'autorotate',
+                                'line-color': '#888',
+                                'target-arrow-color': '#888'
+                            }
+                        }
+                    ],
+                    layout: { name: 'cose', animate: true }
+                });
+
+                // Context menu logic
+                const menu = document.getElementById('context-menu');
+                let currentEdge = null;
+                function hideMenu() { menu.style.display = 'none'; }
+                document.addEventListener('click', hideMenu);
+
+                window.cy.on('cxttap', 'edge', evt => {
+                    evt.originalEvent.preventDefault();
+                    currentEdge = evt.target;
+                    const {x, y} = evt.position;
+                    menu.style.top = y + 'px';
+                    menu.style.left = x + 'px';
+                    menu.style.display = 'block';
+                });
+
+                document.getElementById('cm-edit').onclick = () => {
+                    const oldLabel = currentEdge.data('label'),
+                        val = prompt('New tracelink type:', oldLabel);
+                    if (val) {
+                        currentEdge.data('label', val);
+                        const id = parseInt(currentEdge.id().substring(1));
+                        fetch(`/tracelink/update/${id}?newType=${encodeURIComponent(val)}`, {method: 'POST'});
+                    }
+                    hideMenu();
+                };
+                document.getElementById('cm-delete').onclick = () => {
+                    if (confirm(`Confirm delete "${currentEdge.data('label')}"?`)) {
+                        const id = parseInt(currentEdge.id().substring(1));
+                        window.cy.remove(currentEdge);
+                        fetch(`/tracelink/delete/${id}`, {method: 'DELETE'});
+                    }
+                    hideMenu();
+                };
+                document.getElementById('cm-info').onclick = () => {
+                    alert('Created on ' + currentEdge.data('createdOn'));
+                    hideMenu();
+                };
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Failed to load graph, please check backend port');
+            });
+    });
+</script>
+</body>
+</html>

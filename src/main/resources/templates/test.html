@@ -1,0 +1,32 @@
+<form id="artifactForm" th:action="@{/artifact/add}" method="post" enctype="multipart/form-data">
+  <label for="type">Type:</label>
+  <select id="type" name="type" onchange="toggleFields()">
+    <option value="">Select Type</option>
+    <option value="Requirement">Requirement</option>
+    <option value="Code">Code</option>
+  </select>
+  <br/><br/>
+  <div id="requirementFields" class="hidden">
+    <label for="description">Description:</label>
+    <textarea id="description" name="description"></textarea>
+  </div>
+  <div id="codeFields" class="hidden">
+    <label for="file">Upload File:</label>
+    <input type="file" id="file" name="file"/>
+  </div>
+  <button type="submit">Submit</button>
+</form>
+<script>
+  function toggleFields() {
+    const type = document.getElementById("type").value;
+    const requirementFields = document.getElementById("requirementFields");
+    const codeFields = document.getElementById("codeFields");
+    requirementFields.classList.add("hidden");
+    codeFields.classList.add("hidden");
+    if (type === "Requirement") {
+      requirementFields.classList.remove("hidden");
+    } else if (type === "Code") {
+      codeFields.classList.remove("hidden");
+    }
+  }
+</script>

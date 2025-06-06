@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--
+    Author: Fu Zixiang
+    Author: Ding Zihe
+    Description: This page is home
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traceability System</title>
+  <!-- 修改后的CSS路径 -->
+  <link rel="stylesheet" th:href="@{/css/index.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
+  <style>
+
+    #artifactForm {
+      max-width: 500px; /* 限制表单宽度 */
+      margin: 0 auto; /* 居中 */
+      padding: 20px;
+    }
+
+    button {
+      margin-left: 100px;
+    }
+    /* 隐藏字段 */
+    .hidden {
+      display: none;
+    }
+    /* 表单项间距 */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    /* 标签与控件对齐 */
+    label {
+      display: inline-block;
+      width: 100px;
+      font-weight: bold;
+    }
+    select,
+    textarea,
+    input[type="file"] {
+      width: 300px;
+      padding: 0.4rem;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .modal {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .modal-content.message {
+      border-left: 5px solid #28a745; /* 成功消息绿色边框 */
+    }
+    .modal-content.error {
+      border-left: 5px solid #dc3545; /* 错误消息红色边框 */
+    }
+    .modal-content p {
+      margin: 0 0 15px;
+      font-size: 16px;
+    }
+    .modal-content button {
+      background-color: #e07b50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 0; /* 覆盖之前的按钮样式 */
+    }
+    .modal-content button:hover {
+      background-color: #cc6d3b;
+    }
+  </style>
+</head>
+
+<body class="indexpage">
+<div class="nav">
+  <div class="logo">
+    <span>Traceability<span id="orange-letter">System</span></span>
+  </div>
+  <ul class="navlist">
+    <!-- 修改后的导航链接 -->
+    <li class="navli"><a th:href="@{/artifact/inquiry}">Search</a></li>
+    <li class="navli"><a href="/addTraceLink">TraceLink</a>
+<!--      <ul class="droplist">-->
+<!--        <li><a th:href="@{/electronics}"></a></li>-->
+
+    </li>
+    <li class="navli"><a href="#">About</a></li>
+    <li class="navli"><a href="/artifact/add">Artifact</a></li>
+
+    <li class="navli"><a th:href="@{/login}" class="icon-wrapper"><i class="fas fa-user-circle"></i></a></li>
+
+
+  </ul>
+</div>
+
+<!-- Pop-up window prompt -->
+<div id="messageModal" class="modal" th:if="${message != null}">
+  <div class="modal-content" th:class="${message.startsWith('Successfully added')} ? 'message' : 'error'">
+    <p th:text="${message}"></p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<form id="artifactForm"
+      th:action="@{/artifact/add}"
+      method="post"
+      enctype="multipart/form-data">
+
+  <!-- Type 下拉框 -->
+  <div class="form-group">
+    <label for="type">Type:</label>
+    <select id="type"
+            name="type"
+            onchange="toggleFields()">
+      <option value="">Please choose the type</option>
+      <option value="Requirement">Requirement</option>
+      <option value="Code">Code</option>
+      <option value="Test Case">Test Case</option>
+      <option value="Document">Document</option>
+    </select>
+  </div>
+
+  <!-- Requirement 对应的 description 字段 -->
+  <div id="requirementFields" class="form-group hidden">
+    <label for="description">Description:</label>
+    <textarea id="description"
+              name="description"
+              rows="4"
+              placeholder="请输入需求描述"></textarea>
+  </div>
+
+  <!-- Code 对应的文件上传字段 -->
+  <div id="codeFields" class="form-group hidden">
+    <label for="file">Upload File:</label>
+    <input type="file"
+           id="file"
+           name="file" />
+  </div>
+
+  <!-- Test Case 示例字段（可按需填充） -->
+  <div id="testCaseFields" class="form-group hidden">
+    <label for="testCase">Test Case:</label>
+    <textarea id="testCase"
+              name="testCase"
+              rows="4"
+              placeholder="Please input the test case"></textarea>
+  </div>
+
+  <!-- Document 示例字段（可按需填充） -->
+  <div id="documentFields" class="form-group hidden">
+    <label for="document">Document:</label>
+    <input type="file"
+           id="document"
+           name="document" />
+  </div>
+
+  <!-- 提交按钮 -->
+  <div class="form-group">
+    <button type="submit">Submit</button>
+  </div>
+</form>
+
+<script>
+  function toggleFields() {
+    const type = document.getElementById('type').value;
+    const sections = [
+      'requirementFields',
+      'codeFields',
+      'testCaseFields',
+      'documentFields'
+    ];
+    // 全部隐藏
+    sections.forEach(id =>
+            document.getElementById(id).classList.add('hidden')
+    );
+    // 显示选中类型对应字段
+    if (type === 'Requirement') {
+      document.getElementById('requirementFields')
+              .classList.remove('hidden');
+    } else if (type === 'Code') {
+      document.getElementById('codeFields')
+              .classList.remove('hidden');
+    } else if (type === 'Test Case') {
+      document.getElementById('testCaseFields')
+              .classList.remove('hidden');
+    } else if (type === 'Document') {
+      document.getElementById('documentFields')
+              .classList.remove('hidden');
+    }
+  }
+</script>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  let message = /*[[${message != null}]]*/ false;
+  if (message) {
+    document.getElementById("messageModal").style.display = "flex";
+  }
+  /*]]>*/
+</script>
+<script>
+  function closeModal() {
+    document.getElementById('messageModal').style.display = 'none';
+  }
+</script>
+
+
+</body>
+</html>
